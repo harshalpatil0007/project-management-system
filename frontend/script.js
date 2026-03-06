@@ -75,6 +75,10 @@ if(data.token){
 
 localStorage.setItem("token",data.token)
 
+/* SAVE USER NAME */
+
+localStorage.setItem("username",data.user.name)
+
 window.location.href="dashboard.html"
 
 }else{

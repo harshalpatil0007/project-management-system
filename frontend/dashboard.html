@@ -2,148 +2,223 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>TaskMaster Dashboard</title>
+<title>PMS Dashboard</title>
 
 <style>
 
-body{
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial;
-background:linear-gradient(135deg,#0f172a,#020617);
+}
+
+body{
+display:flex;
+background:#020617;
 color:white;
 }
 
-/* NAVBAR */
+/* SIDEBAR */
 
-.navbar{
+.sidebar{
+width:230px;
+height:100vh;
+background:#0f172a;
+padding:20px;
 display:flex;
+flex-direction:column;
 justify-content:space-between;
-align-items:center;
-padding:15px 40px;
-background:#020617;
-border-bottom:1px solid #1e293b;
 }
 
 .logo{
-font-size:20px;
-font-weight:bold;
-}
-
-.user{
 display:flex;
 align-items:center;
-gap:15px;
+gap:10px;
+font-weight:bold;
+font-size:18px;
+margin-bottom:40px;
+}
+
+.logoBox{
+background:#2563eb;
+padding:8px 12px;
+border-radius:8px;
+}
+
+.menu a{
+display:block;
+padding:12px;
+margin-bottom:10px;
+text-decoration:none;
+color:#94a3b8;
+border-radius:8px;
+}
+
+.menu a:hover{
+background:#1e293b;
+color:white;
+}
+
+.active{
+background:#1e293b;
+color:white;
 }
 
 .logout{
-background:#ef4444;
-border:none;
-padding:8px 15px;
-border-radius:6px;
-color:white;
+color:#ef4444;
 cursor:pointer;
 }
 
-/* MAIN */
+/* MAIN AREA */
 
-.container{
+.main{
+flex:1;
 padding:40px;
 }
 
 .title{
-font-size:32px;
+font-size:28px;
 font-weight:bold;
 }
 
 .subtitle{
 color:#94a3b8;
-margin-top:8px;
+margin-top:6px;
 }
 
-/* CARDS */
+/* PROJECT CARD */
 
-.cards{
-display:flex;
-gap:30px;
+.projects{
 margin-top:40px;
 }
 
 .card{
 background:#0f172a;
 padding:25px;
+width:350px;
 border-radius:12px;
-width:300px;
 box-shadow:0 0 10px rgba(0,0,0,0.5);
 }
 
-.card h3{
-margin:0 0 10px 0;
+.projectIcon{
+background:#1e293b;
+width:40px;
+height:40px;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-bottom:15px;
 }
 
-.badge{
-background:#4f46e5;
+.projectTitle{
+font-size:18px;
+font-weight:bold;
+margin-bottom:8px;
+}
+
+.projectDesc{
+color:#94a3b8;
+margin-bottom:15px;
+}
+
+.line{
+height:1px;
+background:#1e293b;
+margin:10px 0;
+}
+
+.projectFooter{
+display:flex;
+justify-content:space-between;
+font-size:12px;
+color:#94a3b8;
+}
+
+.status{
+background:#1e293b;
 padding:4px 10px;
 border-radius:20px;
-font-size:12px;
-margin-left:10px;
-}
-
-.taskNumber{
-font-size:40px;
-font-weight:bold;
 }
 
 </style>
 
 </head>
 
+
 <body>
 
-<!-- NAVBAR -->
+<!-- SIDEBAR -->
 
-<div class="navbar">
+<div class="sidebar">
 
-<div class="logo">📊 TaskMaster</div>
+<div>
 
-<div class="user">
+<div class="logo">
 
-<span id="username">User</span>
+<div class="logoBox">P</div>
 
-<button class="logout" onclick="logout()">Logout</button>
+<span>PMS</span>
+
+</div>
+
+
+<div class="menu">
+
+<a class="active">Dashboard</a>
+
+<a>My Projects</a>
+
+<a>Team Members</a>
 
 </div>
 
 </div>
 
 
-<!-- CONTENT -->
+<div class="logout" onclick="logout()">
 
-<div class="container">
+Sign Out
 
-<div class="title">Hello 👋</div>
+</div>
+
+</div>
+
+
+
+<!-- MAIN CONTENT -->
+
+<div class="main">
+
+<div class="title">Project Workspace</div>
 
 <div class="subtitle">
-Welcome to your team task management dashboard.
-</div>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>Role Assigned <span class="badge">Member</span></h3>
-
-<p>You can view and complete tasks assigned to you.</p>
-
+Welcome, <span id="username"></span>. Here's what's happening today.
 </div>
 
 
+<div class="projects">
+
 <div class="card">
 
-<h3>Your Tasks</h3>
+<div class="projectIcon">📁</div>
 
-<div class="taskNumber" id="taskCount">0</div>
+<div class="projectTitle">PMS Launch</div>
 
-<p>Tasks assigned to you</p>
+<div class="projectDesc">
+Initializing the Project Management System
+</div>
+
+<div class="line"></div>
+
+<div class="projectFooter">
+
+<span>03/03/2026</span>
+
+<span class="status">Active</span>
+
+</div>
 
 </div>
 
@@ -154,9 +229,24 @@ Welcome to your team task management dashboard.
 
 <script>
 
+/* LOAD USER NAME */
+
+const username = localStorage.getItem("username")
+
+if(username){
+
+document.getElementById("username").innerText = username
+
+}
+
+
+/* LOGOUT FUNCTION */
+
 function logout(){
 
 localStorage.removeItem("token")
+localStorage.removeItem("username")
+
 window.location.href="login.html"
 
 }
@@ -164,4 +254,5 @@ window.location.href="login.html"
 </script>
 
 </body>
+
 </html>
