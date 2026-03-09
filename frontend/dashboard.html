@@ -70,7 +70,7 @@ color:#ef4444;
 cursor:pointer;
 }
 
-/* MAIN AREA */
+/* MAIN */
 
 .main{
 flex:1;
@@ -87,16 +87,14 @@ color:#94a3b8;
 margin-top:6px;
 }
 
-/* PROJECT SECTION */
+/* CARDS */
 
-.projects{
-margin-top:40px;
+.section{
+margin-top:30px;
 display:flex;
 gap:30px;
 flex-wrap:wrap;
 }
-
-/* PROJECT CARD */
 
 .card{
 background:#0f172a;
@@ -106,62 +104,11 @@ border-radius:12px;
 box-shadow:0 0 10px rgba(0,0,0,0.5);
 }
 
-.projectIcon{
-background:#1e293b;
-width:40px;
-height:40px;
-border-radius:8px;
-display:flex;
-align-items:center;
-justify-content:center;
+.card h2{
 margin-bottom:15px;
 }
 
-.projectTitle{
-font-size:18px;
-font-weight:bold;
-margin-bottom:8px;
-}
-
-.projectDesc{
-color:#94a3b8;
-margin-bottom:15px;
-}
-
-.line{
-height:1px;
-background:#1e293b;
-margin:10px 0;
-}
-
-.projectFooter{
-display:flex;
-justify-content:space-between;
-font-size:12px;
-color:#94a3b8;
-}
-
-.status{
-background:#1e293b;
-padding:4px 10px;
-border-radius:20px;
-}
-
-/* TASK CARD */
-
-.taskContainer{
-background:#0f172a;
-padding:25px;
-width:350px;
-border-radius:12px;
-box-shadow:0 0 10px rgba(0,0,0,0.5);
-}
-
-.taskContainer h2{
-margin-bottom:15px;
-}
-
-.taskContainer input{
+.card input, .card select{
 width:100%;
 padding:10px;
 margin-bottom:10px;
@@ -171,7 +118,7 @@ background:#1e293b;
 color:white;
 }
 
-.taskContainer button{
+.card button{
 width:100%;
 padding:10px;
 border:none;
@@ -181,8 +128,39 @@ color:white;
 cursor:pointer;
 }
 
-.taskContainer button:hover{
+.card button:hover{
 background:#1d4ed8;
+}
+
+/* PROGRESS BAR */
+
+.progressBar{
+width:350px;
+height:20px;
+background:#1e293b;
+border-radius:20px;
+margin-top:10px;
+overflow:hidden;
+}
+
+.progress{
+height:100%;
+width:0%;
+background:#22c55e;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+text-align:left;
+border-bottom:1px solid #1e293b;
 }
 
 </style>
@@ -210,14 +188,12 @@ background:#1d4ed8;
 
 </div>
 
-<div class="logout" onclick="logout()">
-Sign Out
-</div>
+<div class="logout" onclick="logout()">Sign Out</div>
 
 </div>
 
 
-<!-- MAIN CONTENT -->
+<!-- MAIN -->
 
 <div class="main">
 
@@ -227,33 +203,12 @@ Sign Out
 Welcome, <span id="username"></span>. Here's what's happening today.
 </div>
 
-<div class="projects">
 
-<!-- PROJECT CARD -->
+<div class="section">
+
+<!-- CREATE TASK -->
 
 <div class="card">
-
-<div class="projectIcon">📁</div>
-
-<div class="projectTitle">PMS Launch</div>
-
-<div class="projectDesc">
-Initializing the Project Management System
-</div>
-
-<div class="line"></div>
-
-<div class="projectFooter">
-<span>03/03/2026</span>
-<span class="status">Active</span>
-</div>
-
-</div>
-
-
-<!-- CREATE TASK CARD -->
-
-<div class="taskContainer">
 
 <h2>Create Task</h2>
 
@@ -261,28 +216,85 @@ Initializing the Project Management System
 
 <input type="text" id="description" placeholder="Description">
 
-<input type="text" id="assignedTo" placeholder="User ID">
+<select id="userSelect">
+<option>Select User</option>
+</select>
 
-<input type="text" id="projectId" placeholder="Project ID">
+<select id="projectSelect">
+<option>Select Project</option>
+</select>
 
 <button onclick="createTask()">Create Task</button>
 
 </div>
 
+
+<!-- UPDATE STATUS -->
+
+<div class="card">
+
+<h2>Update Task Status</h2>
+
+<input type="text" id="taskId" placeholder="Task ID">
+
+<select id="taskStatus">
+<option>Pending</option>
+<option>In Progress</option>
+<option>Completed</option>
+</select>
+
+<button onclick="updateStatus()">Update Status</button>
+
 </div>
+
+
+<!-- PROGRESS BAR -->
+
+<div class="card">
+
+<h2>Project Progress</h2>
+
+<div class="progressBar">
+<div class="progress" id="progress"></div>
+</div>
+
+<p id="progressText">0% Completed</p>
+
+</div>
+
+</div>
+
+
+<!-- TASK LIST -->
+
+<h2 style="margin-top:40px">Tasks</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Task</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="taskTable"></tbody>
+
+</table>
 
 </div>
 
 
 <script>
 
-/* LOAD USER NAME */
+/* LOAD USERNAME */
 
 const username = localStorage.getItem("username")
 
 if(username){
 document.getElementById("username").innerText = username
 }
+
 
 /* LOGOUT */
 
@@ -292,14 +304,63 @@ localStorage.removeItem("username")
 window.location.href="login.html"
 }
 
+
+/* LOAD USERS */
+
+async function loadUsers(){
+
+const res = await fetch("http://localhost:5000/api/users/all")
+
+const users = await res.json()
+
+const select = document.getElementById("userSelect")
+
+users.forEach(user=>{
+
+const option = document.createElement("option")
+
+option.value = user._id
+option.textContent = user.name
+
+select.appendChild(option)
+
+})
+
+}
+
+
+/* LOAD PROJECTS */
+
+async function loadProjects(){
+
+const res = await fetch("http://localhost:5000/api/projects/all")
+
+const projects = await res.json()
+
+const select = document.getElementById("projectSelect")
+
+projects.forEach(project=>{
+
+const option = document.createElement("option")
+
+option.value = project._id
+option.textContent = project.projectName
+
+select.appendChild(option)
+
+})
+
+}
+
+
 /* CREATE TASK */
 
 async function createTask(){
 
 const taskName = document.getElementById("taskName").value
 const description = document.getElementById("description").value
-const assignedTo = document.getElementById("assignedTo").value
-const projectId = document.getElementById("projectId").value
+const assignedTo = document.getElementById("userSelect").value
+const projectId = document.getElementById("projectSelect").value
 
 const res = await fetch("http://localhost:5000/api/tasks/create",{
 
@@ -322,7 +383,82 @@ const data = await res.json()
 
 alert(data.message)
 
+loadTasks()
+
 }
+
+
+/* UPDATE STATUS */
+
+async function updateStatus(){
+
+const taskId = document.getElementById("taskId").value
+const status = document.getElementById("taskStatus").value
+
+const res = await fetch(`http://localhost:5000/api/tasks/update/${taskId}`,{
+
+method:"PUT",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({status})
+
+})
+
+const data = await res.json()
+
+alert(data.message)
+
+loadTasks()
+
+}
+
+
+/* LOAD TASKS */
+
+async function loadTasks(){
+
+const res = await fetch("http://localhost:5000/api/tasks/all")
+
+const tasks = await res.json()
+
+const table = document.getElementById("taskTable")
+
+table.innerHTML=""
+
+let completed=0
+
+tasks.forEach(task=>{
+
+if(task.status==="Completed") completed++
+
+const row=`
+<tr>
+<td>${task.taskName}</td>
+<td>${task.status}</td>
+</tr>
+`
+
+table.innerHTML += row
+
+})
+
+const percent = tasks.length ? (completed/tasks.length)*100 : 0
+
+document.getElementById("progress").style.width = percent + "%"
+
+document.getElementById("progressText").innerText = percent.toFixed(0)+"% Completed"
+
+}
+
+
+/* INITIAL LOAD */
+
+loadUsers()
+loadProjects()
+loadTasks()
 
 </script>
 

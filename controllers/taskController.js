@@ -55,3 +55,32 @@ res.status(500).json({message:error.message})
 }
 
 }
+
+exports.updateTaskStatus = async (req,res)=>{
+
+try{
+
+const {status} = req.body
+
+const task = await Task.findByIdAndUpdate(
+
+req.params.id,
+
+{status},
+
+{new:true}
+
+)
+
+res.json({
+message:"Task status updated",
+task
+})
+
+}catch(error){
+
+res.status(500).json({message:error.message})
+
+}
+
+}

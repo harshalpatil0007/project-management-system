@@ -1,15 +1,21 @@
+
+
 const express = require("express")
 const router = express.Router()
 
 const {
-
 createTask,
-getTasks
-
+getTasks,
+updateTaskStatus
 } = require("../controllers/taskController")
 
-router.post("/create",createTask)
+// Create Task
+router.post("/create", createTask)
 
-router.get("/all",getTasks)
+// Get All Tasks
+router.get("/all", getTasks)
+
+// Update Task Status
+router.put("/update/:id", updateTaskStatus)
 
 module.exports = router
