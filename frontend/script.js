@@ -90,3 +90,33 @@ alert(data.message)
 })
 
 }
+
+async function createTask(){
+
+const taskName = document.getElementById("taskName").value
+const description = document.getElementById("description").value
+const assignedTo = document.getElementById("assignedTo").value
+const projectId = document.getElementById("projectId").value
+
+const res = await fetch("http://localhost:5000/api/tasks/create",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+taskName,
+description,
+assignedTo,
+projectId
+})
+
+})
+
+const data = await res.json()
+
+alert(data.message)
+
+}

@@ -87,11 +87,16 @@ color:#94a3b8;
 margin-top:6px;
 }
 
-/* PROJECT CARD */
+/* PROJECT SECTION */
 
 .projects{
 margin-top:40px;
+display:flex;
+gap:30px;
+flex-wrap:wrap;
 }
+
+/* PROJECT CARD */
 
 .card{
 background:#0f172a;
@@ -142,10 +147,47 @@ padding:4px 10px;
 border-radius:20px;
 }
 
+/* TASK CARD */
+
+.taskContainer{
+background:#0f172a;
+padding:25px;
+width:350px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
+.taskContainer h2{
+margin-bottom:15px;
+}
+
+.taskContainer input{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+border:none;
+border-radius:6px;
+background:#1e293b;
+color:white;
+}
+
+.taskContainer button{
+width:100%;
+padding:10px;
+border:none;
+border-radius:6px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.taskContainer button:hover{
+background:#1d4ed8;
+}
+
 </style>
 
 </head>
-
 
 <body>
 
@@ -156,35 +198,23 @@ border-radius:20px;
 <div>
 
 <div class="logo">
-
 <div class="logoBox">P</div>
-
 <span>PMS</span>
-
 </div>
-
 
 <div class="menu">
-
 <a class="active">Dashboard</a>
-
 <a>My Projects</a>
-
 <a>Team Members</a>
-
 </div>
 
 </div>
-
 
 <div class="logout" onclick="logout()">
-
 Sign Out
-
 </div>
 
 </div>
-
 
 
 <!-- MAIN CONTENT -->
@@ -197,8 +227,9 @@ Sign Out
 Welcome, <span id="username"></span>. Here's what's happening today.
 </div>
 
-
 <div class="projects">
+
+<!-- PROJECT CARD -->
 
 <div class="card">
 
@@ -213,12 +244,28 @@ Initializing the Project Management System
 <div class="line"></div>
 
 <div class="projectFooter">
-
 <span>03/03/2026</span>
-
 <span class="status">Active</span>
+</div>
 
 </div>
+
+
+<!-- CREATE TASK CARD -->
+
+<div class="taskContainer">
+
+<h2>Create Task</h2>
+
+<input type="text" id="taskName" placeholder="Task Name">
+
+<input type="text" id="description" placeholder="Description">
+
+<input type="text" id="assignedTo" placeholder="User ID">
+
+<input type="text" id="projectId" placeholder="Project ID">
+
+<button onclick="createTask()">Create Task</button>
 
 </div>
 
@@ -234,25 +281,50 @@ Initializing the Project Management System
 const username = localStorage.getItem("username")
 
 if(username){
-
 document.getElementById("username").innerText = username
-
 }
 
-
-/* LOGOUT FUNCTION */
+/* LOGOUT */
 
 function logout(){
-
 localStorage.removeItem("token")
 localStorage.removeItem("username")
-
 window.location.href="login.html"
+}
+
+/* CREATE TASK */
+
+async function createTask(){
+
+const taskName = document.getElementById("taskName").value
+const description = document.getElementById("description").value
+const assignedTo = document.getElementById("assignedTo").value
+const projectId = document.getElementById("projectId").value
+
+const res = await fetch("http://localhost:5000/api/tasks/create",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+taskName,
+description,
+assignedTo,
+projectId
+})
+
+})
+
+const data = await res.json()
+
+alert(data.message)
 
 }
 
 </script>
 
 </body>
-
 </html>

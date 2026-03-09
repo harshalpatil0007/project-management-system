@@ -11,7 +11,7 @@ const {projectName,description} = req.body
 const project = new Project({
 projectName,
 description,
-createdBy:req.user.id
+createdBy: null
 })
 
 await project.save()
