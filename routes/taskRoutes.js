@@ -19,3 +19,6 @@ router.get("/all", getTasks)
 router.put("/update/:id", updateTaskStatus)
 
 module.exports = router
+
+router.post("/create", authMiddleware, roleMiddleware("admin"), createTask)
+router.put("/update/:id", authMiddleware, updateTaskStatus)

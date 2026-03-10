@@ -11,3 +11,6 @@ router.post("/create",createProject)
 router.get("/all",getProjects)
 
 module.exports = router
+const roleMiddleware = require("../middleware/roleMiddleware")
+
+router.post("/create", authMiddleware, roleMiddleware("admin"), createProject)

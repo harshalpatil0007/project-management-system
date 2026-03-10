@@ -87,6 +87,11 @@ color:#94a3b8;
 margin-top:6px;
 }
 
+.roleText{
+color:#94a3b8;
+margin-top:5px;
+}
+
 /* CARDS */
 
 .section{
@@ -203,12 +208,14 @@ border-bottom:1px solid #1e293b;
 Welcome, <span id="username"></span>. Here's what's happening today.
 </div>
 
+<p class="roleText">Role: <span id="role"></span></p>
+
 
 <div class="section">
 
-<!-- CREATE TASK -->
+<!-- CREATE TASK (ADMIN ONLY) -->
 
-<div class="card">
+<div class="card" id="createTaskSection">
 
 <h2>Create Task</h2>
 
@@ -295,13 +302,36 @@ if(username){
 document.getElementById("username").innerText = username
 }
 
+/* LOAD ROLE */
+
+const role = localStorage.getItem("role")
+
+if(role){
+document.getElementById("role").innerText = role
+}
+
+/* ROLE BASED UI */
+
+if(role !== "admin"){
+
+const createSection = document.getElementById("createTaskSection")
+
+if(createSection){
+createSection.style.display="none"
+}
+
+}
 
 /* LOGOUT */
 
 function logout(){
+
 localStorage.removeItem("token")
 localStorage.removeItem("username")
+localStorage.removeItem("role")
+
 window.location.href="login.html"
+
 }
 
 
